@@ -17,14 +17,10 @@ public class StorageInfo {
 	public String path;
 	public String state;
 	public boolean isRemoveable;
-	
+
 	private List<StorageInfo> list;
 	public static int VolumeSize;
-	
-	
 
-	
-	
 	public StorageInfo(String path) {
 		this.path = path;
 	}
@@ -32,12 +28,12 @@ public class StorageInfo {
 	public boolean isMounted() {
 		return "mounted".equals(state);
 	}
-	
-	public static int getVolumeSize(Context context){
+
+	public static int getVolumeSize(Context context) {
 		VolumeSize = listAvaliableStorage(context).size();
 		return VolumeSize;
 	}
-	
+
 	public static List<StorageInfo> listAvaliableStorage(Context context) {
 		ArrayList storagges = new ArrayList();
 		StorageManager storageManager = (StorageManager) context
@@ -59,26 +55,26 @@ public class StorageInfo {
 					String path = (String) getPath.invoke(obj, new Object[0]);
 					info = new StorageInfo(path);
 					File file = new File(info.path);
-//					if ((file.exists()) && (file.isDirectory())
-//							&& (file.canWrite())) {
-						Method isRemovable = obj.getClass().getMethod(
-								"isRemovable", new Class[0]);
-						String state = null;
-						try {
-							Method getVolumeState = StorageManager.class
-									.getMethod("getVolumeState", String.class);
-							state = (String) getVolumeState.invoke(
-									storageManager, info.path);
-							info.state = state;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						if (info.isMounted()) {
-							info.isRemoveable = ((Boolean) isRemovable.invoke(
-									obj, new Object[0])).booleanValue();
-							storagges.add(info);
-						}
-					//}
+					// if ((file.exists()) && (file.isDirectory())
+					// && (file.canWrite())) {
+					Method isRemovable = obj.getClass().getMethod(
+							"isRemovable", new Class[0]);
+					String state = null;
+					try {
+						Method getVolumeState = StorageManager.class.getMethod(
+								"getVolumeState", String.class);
+						state = (String) getVolumeState.invoke(storageManager,
+								info.path);
+						info.state = state;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (info.isMounted()) {
+						info.isRemoveable = ((Boolean) isRemovable.invoke(obj,
+								new Object[0])).booleanValue();
+						storagges.add(info);
+					}
+					// }
 				}
 			}
 		} catch (NoSuchMethodException e1) {
@@ -93,5 +89,5 @@ public class StorageInfo {
 		storagges.trimToSize();
 		return storagges;
 	}
-	
+
 }
